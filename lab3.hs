@@ -9,7 +9,7 @@ module Lab3 where
 -- ===================================
 
 evens :: [Integer] -> [Integer]
-evens = undefined
+evens ns = [ n | n <- ns, even n ]
 
 -- ===================================
 -- Ex. 3 - 4 
@@ -17,7 +17,8 @@ evens = undefined
 
 -- complete the following line with the correct type signature for this function
 -- squares :: ... 
-squares n = undefined
+squares :: Integer -> [Integer]
+squares n = [ m^2 | m <- [1..n] ]
 
 sumSquares :: Integer -> Integer
 sumSquares n = sum (squares n)
@@ -28,7 +29,8 @@ sumSquares n = sum (squares n)
 
 -- complete the following line with the correct type signature for this function
 -- squares' :: ...
-squares' m n = undefined
+squares' :: Integer -> Integer -> [Integer]
+squares' m n = [ x^2 | x <- [n+1..n+m] ]
 
 sumSquares' :: Integer -> Integer
 sumSquares' x = sum . uncurry squares' $ (x, x)
@@ -38,4 +40,4 @@ sumSquares' x = sum . uncurry squares' $ (x, x)
 -- ===================================
 
 coords :: Integer -> Integer -> [(Integer,Integer)]
-coords = undefined
+coords m n = [ (x, y) | x <- [0..m], y <- [0..n] ]
