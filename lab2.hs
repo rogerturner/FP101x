@@ -8,29 +8,38 @@ module Lab2 where
 -- Ex. 0
 -- ===================================
 
+(|>) :: a -> (a -> b) -> b ; infixl 0 |>
+(|>) a f = f a    -- pipe result to next function
+
 toDigits :: Integer -> [Integer]
-toDigits = undefined
+toDigits n 
+  | n < 0     = error "toDigits: n < 0"
+  | n <= 9    = [n] 
+  | otherwise = (div n 10 |> toDigits) ++ [mod n 10]
 
 -- ===================================
 -- Ex. 1
 -- ===================================
 
 toDigitsRev :: Integer -> [Integer]
-toDigitsRev = undefined
+toDigitsRev = reverse . toDigits
 
 -- ===================================
 -- Ex. 2
 -- ===================================
 
 doubleSecond :: [Integer] -> [Integer]
-doubleSecond = undefined
+doubleSecond ns 
+  | length ns < 2 = ns
+  | otherwise     = [n0, 2 * n1] ++ doubleSecond rest
+  where n0 : n1 : rest = ns
 
 -- ===================================
 -- Ex. 3
 -- ===================================
 
 sumDigits :: [Integer] -> Integer
-sumDigits = undefined
+sumDigits ns = map toDigits ns |> concat |> sum
 
 
 -- ===================================
@@ -38,7 +47,7 @@ sumDigits = undefined
 -- ===================================
 
 isValid :: Integer -> Bool
-isValid = undefined
+isValid n = (toDigitsRev n |> doubleSecond |> sumDigits) `mod` 10 == 0
 
 
 -- ===================================
