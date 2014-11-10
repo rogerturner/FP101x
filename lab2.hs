@@ -1,15 +1,11 @@
 module Lab2 where
-
-------------------------------------------------------------------------------------------------------------------------------
 -- Lab 2: Validating Credit Card Numbers
-------------------------------------------------------------------------------------------------------------------------------
-
--- ===================================
--- Ex. 0
--- ===================================
 
 (|>) :: a -> (a -> b) -> b ; infixl 0 |>
 (|>) a f = f a    -- pipe result to next function
+
+isValid :: Integer -> Bool
+isValid n = (toDigitsRev n |> doubleSecond |> sumDigits) `mod` 10 == 0
 
 toDigits :: Integer -> [Integer]
 toDigits n 
@@ -17,16 +13,8 @@ toDigits n
   | n <= 9    = [n] 
   | otherwise = (div n 10 |> toDigits) ++ [mod n 10]
 
--- ===================================
--- Ex. 1
--- ===================================
-
 toDigitsRev :: Integer -> [Integer]
 toDigitsRev = reverse . toDigits
-
--- ===================================
--- Ex. 2
--- ===================================
 
 doubleSecond :: [Integer] -> [Integer]
 doubleSecond ns 
@@ -34,25 +22,8 @@ doubleSecond ns
   | otherwise     = [n0, 2 * n1] ++ doubleSecond rest
   where n0 : n1 : rest = ns
 
--- ===================================
--- Ex. 3
--- ===================================
-
 sumDigits :: [Integer] -> Integer
 sumDigits ns = map toDigits ns |> concat |> sum
-
-
--- ===================================
--- Ex. 4
--- ===================================
-
-isValid :: Integer -> Bool
-isValid n = (toDigitsRev n |> doubleSecond |> sumDigits) `mod` 10 == 0
-
-
--- ===================================
--- Ex. 5
--- ===================================
     
 numValid :: [Integer] -> Integer
 numValid xs = sum . map (\_ -> 1) $ filter isValid xs
