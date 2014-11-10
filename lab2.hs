@@ -8,16 +8,10 @@ isValid :: Integer -> Bool
 isValid n = (toDigits n |> doubleSecondFromRight |> sumDigits) `mod` 10 == 0
 
 toDigits :: Integer -> [Integer]
-toDigits n 
-  | n < 0     = error "toDigits: n < 0"
-  | n <= 9    = [n] 
-  | otherwise = (div n 10 |> toDigits) ++ [mod n 10]
+toDigits n = reverse [ mod m 10 | m <- takeWhile (>0) (iterate (`div` 10) n)]
 
 doubleSecond :: [Integer] -> [Integer]
-doubleSecond ns 
-  | length ns < 2 = ns
-  | otherwise     = [n0, 2 * n1] ++ doubleSecond rest
-  where n0 : n1 : rest = ns
+doubleSecond ns = [fst n * snd n | n <- zip ns (cycle [1,2])]
   
 doubleSecondFromRight :: [Integer] -> [Integer]
 doubleSecondFromRight = reverse . doubleSecond . reverse
