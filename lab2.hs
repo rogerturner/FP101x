@@ -5,7 +5,7 @@ module Lab2 where
 (|>) a f = f a    -- pipe result to next function
 
 isValid :: Integer -> Bool
-isValid n = (toDigitsRev n |> doubleSecond |> sumDigits) `mod` 10 == 0
+isValid n = (toDigits n |> doubleSecondFromRight |> sumDigits) `mod` 10 == 0
 
 toDigits :: Integer -> [Integer]
 toDigits n 
@@ -13,20 +13,20 @@ toDigits n
   | n <= 9    = [n] 
   | otherwise = (div n 10 |> toDigits) ++ [mod n 10]
 
-toDigitsRev :: Integer -> [Integer]
-toDigitsRev = reverse . toDigits
-
 doubleSecond :: [Integer] -> [Integer]
 doubleSecond ns 
   | length ns < 2 = ns
   | otherwise     = [n0, 2 * n1] ++ doubleSecond rest
   where n0 : n1 : rest = ns
+  
+doubleSecondFromRight :: [Integer] -> [Integer]
+doubleSecondFromRight = reverse . doubleSecond . reverse
 
 sumDigits :: [Integer] -> Integer
 sumDigits ns = map toDigits ns |> concat |> sum
     
 numValid :: [Integer] -> Integer
-numValid xs = sum . map (\_ -> 1) $ filter isValid xs
+numValid ns = filter isValid ns |> length |> toInteger
 
 
 creditcards :: [Integer]
