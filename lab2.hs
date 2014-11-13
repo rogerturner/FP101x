@@ -2,7 +2,7 @@ module Lab2 where
 -- Lab 2: Validating Credit Card Numbers
 
 (|>) :: a -> (a -> b) -> b ; infixl 0 |>
-(|>) a f = f a    -- pipe result to next function
+a |> f = f a    -- pipeline operator
 
 isValid :: Integer -> Bool
 isValid n = (toDigits n |> doubleSecondFromRight |> sumDigits) `mod` 10 == 0
