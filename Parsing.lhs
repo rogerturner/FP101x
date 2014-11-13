@@ -16,8 +16,13 @@ The monad of parsers
 > newtype Parser a              =  P (String -> [(a,String)])
 >
 > instance Monad Parser where
->    return v                   =  P (\inp -> [(v,inp)])
->    p >>= f                    =  undefined -- you will need to implement this in an exercise
+>   return v = P (\inp -> [(v,inp)])
+> 
+>   p >>= f  = P ( \inp -> case parse p inp of      -- apply p
+>                  []        -> []                -- p failed: fail
+>                  [(v,out)] -> parse (f v) out )
+>                -- p succeeded with result v (and remaining input):
+>                -- apply a wrapper which saves v and then applies next parser
 > 
 > instance MonadPlus Parser where
 >    mzero                      =  P (\inp -> [])
