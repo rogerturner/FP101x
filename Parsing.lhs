@@ -18,11 +18,11 @@ The monad of parsers
 > instance Monad Parser where
 >   return v = P (\inp -> [(v,inp)])
 > 
->   p >>= f  = P ( \inp -> case parse p inp of      -- apply p
+>   p >>= f  = P ( \inp -> case parse p inp of    -- apply p
 >                  []        -> []                -- p failed: fail
 >                  [(v,out)] -> parse (f v) out )
->                -- p succeeded with result v (and remaining input):
->                -- apply a wrapper which saves v and then applies next parser
+>                  -- p succeeded with result v (and remaining input):
+>                  -- apply a wrapper which saves v and then applies next parser
 > 
 > instance MonadPlus Parser where
 >    mzero                      =  P (\inp -> [])
@@ -99,7 +99,10 @@ Derived primitives
 >                                     return (read xs)
 >
 > int                           :: Parser Int
-> int                           =  undefined -- you will need to implement this in an exercise
+> int                           =  ( do char '-'
+>                                       n <- nat
+>                                       return (-n))
+>                                    +++ nat
 > 
 > space                         :: Parser ()
 > space                         =  do many (sat isSpace)
