@@ -11,7 +11,8 @@ import Data.Char
 -- ===================================
 
 triangle :: Integer -> Integer
-triangle n = undefined
+triangle 0 = 0
+triangle n = n + triangle (n-1)
 
 -- ===================================
 -- Ex. 1
