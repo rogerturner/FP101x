@@ -19,7 +19,8 @@ triangle n = n + triangle (n-1)
 -- ===================================
 
 count :: Eq a => a -> [a] -> Int
-count x xs = undefined
+count a [] = 0
+count a (x:xs) = (if a == x then 1 else 0) + count a xs
 
 xs = [1,2,35,2,3,4,8,2,9,0,5,2,8,4,9,1,9,7,3,9,2,0,5,2,7,6,92,8,3,6,1,9,2,4,8,7,1,2,8,0,4,5,2,3,6,2,3,9,8,4,7,1,4,0,1,8,4,1,2,4,56,7,2,98,3,5,28,4,0,12,4,6,8,1,9,4,8,62,3,71,0,3,8,10,2,4,7,12,9,0,3,47,1,0,23,4,8,1,20,5,7,29,3,5,68,23,5,6,3,4,98,1,0,2,3,8,1]
 ys = map (\x -> ((x + 1) * 3) ^ 3 - 7) xs
@@ -39,7 +40,11 @@ poem = [ "Three Types for the Lisp-kings under the parentheses,"
 -- ===================================
 
 euclid :: (Int,  Int) -> Int
-euclid (x, y) = undefined
+euclid (x, _) | x <= 0 = undefined
+euclid (_, y) | y <= 0 = undefined
+euclid (x, y) | x == y = x
+euclid (x, y) | x < y  = euclid (x, y-x)
+euclid (x, y)          = euclid (x-y, y)
 
 -- ===================================
 -- Ex. 3
