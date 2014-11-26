@@ -65,6 +65,14 @@ Combinatorial functions
     | otherwise = y : removeone x ys
 )
 
+> isChoice :: Eq a => [a] -> [a] -> Bool
+> isChoice xs ys = or [ b | b <- map (xs ==) (choices ys)]
+
+( isChoice [] _ = True
+  isChoice (x:xs) [] = False
+  isChoice (x:xs) ys = elem x ys && isChoice xs (removeone x ys)
+)
+
 Formalising the problem
 -----------------------
 
