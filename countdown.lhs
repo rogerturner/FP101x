@@ -56,6 +56,15 @@ Combinatorial functions
 
 ( choices xs = [zs | ys <- subs xs, zs <- perms ys] )
 
+> removeone :: Eq a => a -> [a] -> [a]
+> removeone x xs = [ y | y <- xs, y /= x ]
+
+( removeone x [] = []
+  removeone x (y:ys)
+    | x == y    = ys
+    | otherwise = y : removeone x ys
+)
+
 Formalising the problem
 -----------------------
 
