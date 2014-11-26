@@ -52,7 +52,9 @@ Combinatorial functions
 > perms (x:xs)                  =  concat (map (interleave x) (perms xs))
 >
 > choices                       :: [a] -> [[a]]
-> choices                       =  undefined
+> choices                       =  \xs -> concat $ map perms (subs xs)
+
+( choices xs = [zs | ys <- subs xs, zs <- perms ys] )
 
 Formalising the problem
 -----------------------
