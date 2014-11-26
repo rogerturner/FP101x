@@ -51,4 +51,14 @@ euclid (x, y)          = euclid (x-y, y)
 -- ===================================
 
 funkyMap :: (a -> b) -> (a -> b) -> [a] -> [b]
-funkyMap f g xs = undefined
+funkyMap f g xs = [fn x | (fn,x) <- zip (cycle [f, g]) xs]
+
+ex11 :: a -> b -> (b,a)
+ex11 a = \b -> (b, a)
+
+ex12 :: (a -> ([(a -> a)] -> a))
+ex12 = foldr id
+
+
+
+
