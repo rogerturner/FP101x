@@ -57,13 +57,12 @@ Combinatorial functions
 ( choices xs = [zs | ys <- subs xs, zs <- perms ys] )
 
 > removeone :: Eq a => a -> [a] -> [a]
-> removeone x xs = [ y | y <- xs, y /= x ]
+> removeone x [] = []
+> removeone x (y:ys)
+>   | x == y    = ys
+>   | otherwise = y : removeone x ys
 
-( removeone x [] = []
-  removeone x (y:ys)
-    | x == y    = ys
-    | otherwise = y : removeone x ys
-)
+> --removeone x xs = [ y | y <- xs, y /= x ] (this is removeAllOccurencesOf :( )
 
 > isChoice :: Eq a => [a] -> [a] -> Bool
 > isChoice xs ys = or [ b | b <- map (xs ==) (choices ys)]
