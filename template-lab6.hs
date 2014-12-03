@@ -1,13 +1,8 @@
-------------------------------------------------------------------------------------------------------------------------------
 -- ROSE TREES, FUNCTORS, MONOIDS, FOLDABLES
-------------------------------------------------------------------------------------------------------------------------------
 
 data Rose a = a :> [Rose a] deriving Show
 
--- ===================================
 -- Ex. 0-2
--- ===================================
-
 root :: Rose a -> a 
 root = error "you have to implement root" 
 
@@ -18,10 +13,7 @@ xs = 0 :> [1 :> [2 :> [3 :> [4 :> [], 5 :> []]]], 6 :> [], 7 :> [8 :> [9 :> [10 
 
 ex2 = root . head . children . head . children . head . drop 2 $ children xs
 
--- ===================================
 -- Ex. 3-7
--- ===================================
-
 size :: Rose a -> Int
 size = error "you have to implement size"
 
@@ -30,19 +22,13 @@ leaves = error "you have to implement leaves"
 
 ex7 = (*) (leaves . head . children . head . children $ xs) (product . map size . children . head . drop 2 . children $ xs)
 
--- ===================================
 -- Ex. 8-10
--- ===================================
-
 instance Functor Rose where
   fmap = error "you have to implement fmap for Rose"
 
 ex10 = round . root . head . children . fmap (\x -> if x > 0.5 then x else 0) $ fmap (\x -> sin(fromIntegral x)) xs
 
--- ===================================
 -- Ex. 11-13
--- ===================================
-
 class Monoid m where
   mempty :: m
   mappend :: m -> m -> m
@@ -69,10 +55,7 @@ num2 = mappend (Sum 3) (mappend mempty (mappend (mappend (mappend (Sum 2) mempty
   
 ex13 = unSum (mappend (Sum 5) (Sum (unProduct (mappend (Product (unSum num2)) (mappend (Product (unSum num1)) (mappend mempty (mappend (Product 2) (Product 3))))))))
 
--- ===================================
 -- Ex. 14-15
--- ===================================
-
 class Functor f => Foldable f where
   fold :: Monoid m => f m -> m
   foldMap :: Monoid m => (a -> m) -> (f a -> m)
@@ -85,18 +68,12 @@ sumxs = Sum 0 :> [Sum 13 :> [Sum 26 :> [Sum (-31) :> [Sum (-45) :> [], Sum 23 :>
 
 ex15 = unSum (mappend (mappend (fold sumxs) (mappend (fold . head . drop 2 . children $ sumxs) (Sum 30))) (fold . head . children $ sumxs))
 
--- ===================================
 -- Ex. 16-18
--- ===================================
-
 ex17 = unSum (mappend (mappend (foldMap (\x -> Sum x) xs) (mappend (foldMap (\x -> Sum x) . head . drop 2 . children $ xs) (Sum 30))) (foldMap (\x -> Sum x) . head . children $ xs))
 
 ex18 = unSum (mappend (mappend (foldMap (\x -> Sum x) xs) (Sum (unProduct (mappend (foldMap (\x -> Product x) . head . drop 2 . children $ xs) (Product 3))))) (foldMap (\x -> Sum x) . head . children $ xs))
 
--- ===================================
 -- Ex. 19-21
--- ===================================
-
 fproduct, fsum :: (Foldable f, Num a) => f a -> a
 fsum = error "you have to implement fsum"
 fproduct = error "you have to implement fproduct"
