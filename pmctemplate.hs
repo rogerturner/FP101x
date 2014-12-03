@@ -2,6 +2,10 @@ module Lab5 where
 
 import Control.Monad
 
+--instance Monad Concurrent where
+--    (Concurrent f) >>= g = ...
+--    return x = Concurrent (\c -> c x)
+
 data Concurrent a = Concurrent ((a -> Action) -> Action)
 
 data Action 
@@ -14,56 +18,40 @@ instance Show Action where
     show (Fork x y) = "fork " ++ show x ++ " " ++ show y
     show Stop = "stop"
 
--- ===================================
 -- Ex. 0
--- ===================================
-
 action :: Concurrent a -> Action
-action = error "You have to implement action"
+action (Concurrent ma) = ma (\x -> Stop)
 
-
--- ===================================
 -- Ex. 1
--- ===================================
-
 stop :: Concurrent a
-stop = error "You have to implement stop"
+stop = Concurrent (\x -> Stop)
 
-
--- ===================================
 -- Ex. 2
--- ===================================
-
 atom :: IO a -> Concurrent a
-atom = error "You have to implement atom"
+atom x = Concurrent (\c -> Atom ( x >>= \a -> return (c a)))
 
-
--- ===================================
 -- Ex. 3
--- ===================================
-
 fork :: Concurrent a -> Concurrent ()
-fork = error "You have to implement fork"
+fork a = Concurrent (\x -> Fork (action a) (x ()) )
 
 par :: Concurrent a -> Concurrent a -> Concurrent a
-par = error "You have to implement par"
+par a1 a2 = Concurrent (\x -> Fork (action a1) (action a2))
 
-
--- ===================================
 -- Ex. 4
--- ===================================
+
+unwrap (Concurrent x) = x
 
 instance Monad Concurrent where
-    (Concurrent f) >>= g = error "You have to implement >>="
-    return x = Concurrent (\c -> c x)
+  (Concurrent f) >>= g = Concurrent (\c -> f (\x -> unwrap (g x) c))
+  return x = Concurrent (\c -> c x)
 
-
--- ===================================
 -- Ex. 5
--- ===================================
-
 roundRobin :: [Action] -> IO ()
-roundRobin = error "You have to implement roundRobin"
+roundRobin [] = return ()
+roundRobin (a:as) = case a of
+  Atom a     -> do { a' <- a; roundRobin (as ++ [a']) }
+  Fork a1 a2 -> roundRobin (as ++ [a1,a2])
+  Stop       -> roundRobin as
 
 -- ===================================
 -- Tests
@@ -95,3 +83,36 @@ genRandom 42   = [71, 71, 17, 14, 16, 91, 18, 71, 58, 75]
 loop :: [Int] -> Concurrent ()
 loop xs = mapM_ (atom . putStr . show) xs
 
+-- synsem's examples (Lab5: Concurrency Examples):
+
+myex0 = run $ (ho >> ho >> ho) >>
+              (hi >> hi >> hi) >> atom (putStr "\n")
+  where ho = atom (putStr "ho")
+        hi = atom (putStr "hi")
+        
+myex1 = run $ fork (ho >> ho >> ho) >>
+                   (hi >> hi >> hi) >> atom (putStr "\n")
+  where ho = atom (putStr "ho")
+        hi = atom (putStr "hi")
+
+myex2 = run $ fork (put3 "ba") >> fork (put3 "di") >>
+        put3 "bu" >> atom (putStr "\n")
+  where put3 = sequence . take 3 . repeat . atom . putStr
+
+myex3 = run $ par (put3 "ba") (put3 "di" >> stop) >>
+              atom (putStr "\n")
+  where put3 = sequence . take 3 . repeat . atom . putStr
+
+-- LittleBigDej's example:
+
+syracuse :: Int -> Concurrent Int
+syracuse 1 = return 1
+syracuse n = (print n) >>= syr >>= syracuse
+  where print n = do atom $ putStr $ (show  n) ++ " " 
+                     return n
+        syr n | n `mod` 2 == 0 = return (n `div` 2)
+              | otherwise      = return (3 * n + 1) 
+
+ex6 :: Int -> Concurrent ()
+ex6 n = do syracuse n
+           atom $ putStrLn ""
